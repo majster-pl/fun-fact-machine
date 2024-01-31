@@ -1,0 +1,13 @@
+[Unit]
+Description=Fun Fact Machine (demon)
+After=network.target
+
+[Service]
+ExecStart=/home/YOUR_USER_NAME/luma-env/bin/python3 /opt/fun-facts/demon/buttons_demon.py
+WorkingDirectory=/opt/fun-facts/
+User=YOUR_USER_NAME
+Group=YOUR_USER_NAME
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
