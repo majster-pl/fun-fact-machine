@@ -1,0 +1,5 @@
+__pycache__/
+fact_to_print.pdf
+fun_fact_logs.log
+/src/facts_with_obc.json
+/src/facts.db

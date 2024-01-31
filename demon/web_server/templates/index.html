@@ -1,0 +1,210 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List of Entries</title>
+</head>
+<body>
+    <h1>List of Entries</h1>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Times Used</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for fact in data %}
+                <tr>
+                    <td>{{ fact.id }}</td>
+                    <td>{{ fact.category }}</td>
+                    <td>{{ fact.description }}</td>
+                    <td>{{ fact.times_used }}</td>
+
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editable Table</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .editable {
+            cursor: pointer;
+        }
+
+        .editable input {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="fixed-bottom" style="width: 230px;">
+        <a href="/add_entry" class="btn btn-success m-4">Add Entry Fun Fact</a>
+    </div>
+
+    <table style="margin-bottom: 85px;">
+        <thead class="sticky-top mt-5 w-">
+            <tr>
+                <th>ID</th>
+                <th>Category</th>
+                <th>Fun Fact</th>
+                <!-- Add other columns as needed -->
+                <th>Times Used</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+                <tr id="row_{{ row.id }}">
+                    <td>{{ row.id }}</td>
+                    <!-- <td class="editable" data-id="{{ row.id }}" data-column="category">{{ row.category }}</td> -->
+                    <td class="editable" data-id="{{ row.id }}" data-column="category">
+                        <span class="text">{{ row.category }}</span>
+                        <input class="input" type="text" value="{{ row.category }}" style="display: none;">
+                    </td>
+                    <!-- <td class="editable" data-id="{{ row.id }}" data-column="description">{{ row.description }}</td> -->
+                    <td class="editable" data-id="{{ row.id }}" data-column="description">
+                        <span class="text">{{ row.description }}</span>
+                        <input class="input" type="text" value="{{ row.description }}" style="display: none;">
+                    </td>
+                    <!-- <td class="editable" data-id="{{ row.id }}" data-column="times_used">{{ row.times_used }}</td> -->
+                    <td class="editable" data-id="{{ row.id }}" data-column="times_used">
+                        <span class="text">{{ row.times_used }}</span>
+                        <input class="input" type="text" value="{{ row.times_used }}" style="display: none;">
+                    </td>
+                    <td><button class="btn btn-primary" onclick="toggleEditSave({{ row.id }})">Edit</button></td>
+                    <!-- <td><button onclick="saveChanges({{ row.id }})">Save</button></td> -->
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        // document.querySelectorAll('.editable').forEach(element => {
+        //     element.addEventListener('dblclick', function () {
+        //         const id = this.getAttribute('data-id');
+        //         const column = this.getAttribute('data-column');
+        //         const value = this.innerText;
+        //         this.innerHTML = `<input type="text" id="edit_${id}_${column}" value="${value}">`;
+        //     });
+        // });
+
+        // function saveChanges(id) {
+        //     const category = document.getElementById(`edit_${id}_category`) ? document.getElementById(`edit_${id}_category`).value : null;
+        //     const description = document.getElementById(`edit_${id}_description`) ? document.getElementById(`edit_${id}_description`).value : null;
+        //     const times_used = document.getElementById(`edit_${id}_times_used`) ? document.getElementById(`edit_${id}_times_used`).value : null;
+        //     console.log('debug category, description', category, description);
+
+        //     // Send the updated data to the server using AJAX (you might want to use a library like Axios)
+        //     fetch(`/update/${id}`, {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //         body: JSON.stringify({
+        //             category,
+        //             description,
+        //             times_used
+        //             // Add other columns as needed
+        //         }),
+        //     })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         // Handle response from the server, e.g., show success message
+        //         console.log(data);
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //     });
+        // }
+
+        function toggleEditSave(id) {
+            const row = document.getElementById(`row_${id}`);
+            row.style.background = "lightblue"
+            const editButton = row.querySelector('button');
+            const editableFields = row.querySelectorAll('.editable');
+
+            if (editButton.innerText === 'Edit') {
+                // Switch to editing mode
+                editButton.innerText = 'Save';
+
+                editableFields.forEach(field => {
+                    const textSpan = field.querySelector('.text');
+                    const inputField = field.querySelector('.input');
+
+                    textSpan.style.display = 'none';
+                    inputField.style.display = 'block';
+                });
+            } else {
+                // Switch to saving mode
+                editButton.innerText = 'Edit';
+
+                // Get the updated values from input fields
+                const updatedData = {
+                    category: row.querySelector('.input[data-column="category"]') ? row.querySelector('.input[data-column="category"]').value : null,
+                    description: row.querySelector('.input[data-column="description"]') ? row.querySelector('.input[data-column="description"]').value : null,
+                    times_used: row.querySelector('.input[data-column="times_used"]') ? row.querySelector('.input[data-column="times_used"]').value : null,
+                    // Add other columns as needed
+                };
+
+                // Send the updated data to the server using AJAX (you might want to use a library like Axios)
+                fetch(`/update/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedData),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle response from the server, e.g., show success message
+                    console.log(data);
+
+                    // Update the text spans with the new values
+                    editableFields.forEach(field => {
+                        const textSpan = field.querySelector('.text');
+                        const inputField = field.querySelector('.input');
+
+                        textSpan.innerText = inputField.value;
+                        textSpan.style.display = 'inline';
+                        inputField.style.display = 'none';
+                    });
+                    row.style.background = "white"
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    row.style.background = "red"
+                });
+            }
+        }
+    </script>
+</body>
+</html>

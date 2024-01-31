@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Fun Fact</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Add New Fun Fact</h2>
+        <form method="POST" action="{{ url_for('add_entry') }}">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.category.label(class="form-control-label") }}
+                {{ form.category(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.description.label(class="form-control-label") }}
+                {{ form.description(class="form-control") }}
+            </div>
+            <a href="/" class="btn btn-secondary mr-3">Back</a>
+            <button type="submit" class="btn btn-primary">Add Entry</button>
+        </form>
+    </div>
+</body>
+</html>
