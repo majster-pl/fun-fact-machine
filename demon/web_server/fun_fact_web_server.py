@@ -25,7 +25,7 @@ def create_app():
     login_manager.login_view = 'login'
 
     # Dummy user data for demonstration
-    users = {'admin': {'username': 'admin', 'password': 'onebigcircle'}}
+    users = {'admin': {'username': 'admin', 'password': 'password'}}
 
     class User(UserMixin):
         def __init__(self, user_id):
