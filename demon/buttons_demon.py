@@ -2,15 +2,14 @@
 
 import RPi.GPIO as GPIO
 import time
-from datetime import datetime
-import sys, os, socket, subprocess, re
+import sys, os, socket
 import math
 from luma.core.interface.serial import i2c
 from luma.core.render import canvas as canvas2
 from luma.oled.device import ssd1306
 from PIL import ImageFont
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from main import print_fact_by_category
 from src.db_utils import init_db
 
@@ -72,7 +71,6 @@ def get_categories():
 
 get_categories()
 
-
 def get_total_prints():
     conn, cursor = init_db()
     sql = """SELECT SUM(times_used) as total_sum from facts"""
@@ -88,26 +86,12 @@ def get_total_prints():
 
     return str(total)
 
-# def screen_saver():
-#     fun_fact_started = False
-#     try:
-#         dots_visible = True
-#         while True and not fun_fact_started:
-#             current_time = datetime.now().strftime("%H:%M:%S") if dots_visible else datetime.now().strftime("%H %M %S")
-
-#             with canvas2(device) as draw:
-#                 draw.text((5, 10), current_time, fill="white", font=clock_font_bold)
-#             dots_visible = not dots_visible
-#             time.sleep(1)
-
-#     except KeyboardInterrupt:
-#         device.clear()
 
 def get_local_ip():
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
-        ip =  s.getsockname()[0]
+        ip = s.getsockname()[0]
         s.close()
         return ip
     except socket.error as e:
@@ -137,7 +121,6 @@ def draw_menu():
         draw.rectangle(device.bounding_box, outline="white", fill="black")
         y = 2
 
-
         if printing:
             draw.text((5, 8), "Printing fact...", fill="white", font=font_bold)
 
@@ -157,7 +140,6 @@ def draw_menu():
                         draw.text((5, y), "* " + " ".join(str(item).split("_")).title(), fill="white")
                     else:
                         draw.text((10, y), "  " + " ".join(str(item).split("_")).title(), fill="white")
-
                     y += 10
 
 def button_up_callback(channel):

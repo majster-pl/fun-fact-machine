@@ -22,21 +22,14 @@
 # THE SOFTWARE.
 
 import cups
-import random
 import time
-# import sys
-import json
 import os
 import textwrap
-# from reportlab.lib.pagesizes import landscape
 from reportlab.pdfgen import canvas
 from reportlab.lib import utils
 from datetime import datetime
 from src.db_utils import init_db
 import logging
-
-#PWD = os.getcwd()
-PWD = "/opt/fun-facts"
 
 script_directory = os.path.dirname(os.path.abspath(__file__))
 logs_path = os.path.join(script_directory, 'fun_fact_logs.log')
@@ -51,25 +44,6 @@ logging.basicConfig(
 
 PRINTER_NAME = 'BIXOLON_SRP-E300'
 
-def fetch_and_parse_json(url=None):
-    # try:
-    #     # Make a GET request to the URL
-    #     response = requests.get(url)
-
-    #     # Check if the request was successful (status code 200)
-    #     if response.status_code == 200:
-    #         # Parse the JSON data
-    #         data = json.loads(response.text)
-    #         return data
-    #     else:
-    #         print(f"Error: Unable to fetch data. Status code: {response.status_code}")
-    # except Exception as e:
-    #     print(f"Error: {e}")
-    file_path = PWD + "/src/facts.json"
-    with open(file_path, 'r') as file:
-        data = json.load(file)
-        return data
-    
 def create_pdf(file_path, image_path, text):
     success = True
     
@@ -78,7 +52,7 @@ def create_pdf(file_path, image_path, text):
         print("generating pdf...")
         c = canvas.Canvas(file_path, pagesize=(width, height))
 
-        # check if given img exists...
+        # check if given img exists if not use about_me.png
         if not os.path.exists(image_path):
             image_path = os.path.join(script_directory, "src", "images", "about_me.png")
 
@@ -126,7 +100,7 @@ def print_fact(pdf_file_path=None):
 
     # print("printers", printers[printer_name])
     if PRINTER_NAME not in printers:
-        print(f"Printer '{PRINTER_NAME}' not found.")
+        logging.error(f"Printer '{PRINTER_NAME}' not found.")
         return success
 
     # Print a file
@@ -185,7 +159,7 @@ def get_fun_fact(category=None):
     """
     cursor.execute(update_sql, (times_used + 1, current_timestamp, fact_id))
 
-    # if random_fact:
+    # if random_fact is stats from about_this_machine, print stats about this machine...
     if random_fact == "stats":
         sql = """SELECT SUM(times_used) as total_sum FROM facts"""
         cursor.execute(sql)
@@ -201,26 +175,18 @@ def get_fun_fact(category=None):
 
 
 def print_fact_by_category(_category=None):
+    success = False
+
     if not _category:
         logging.info(f"Generating random fact...")
     else:
         logging.info(f"Generating fun fact in category: {_category}")
     
-    success = False
-    # currently not used, using local file instead
-    # json_url = "https://waliczek.org/downloads/facts.json"
-  
     fun_fact, category = get_fun_fact(_category)
-
-    if fun_fact == "stats":
-        fun_fact = "I'"
 
     # split text to fit on the paper
     wrapped_content = " ".join(str(category).split("_")).title() + ':\n' + textwrap.fill(fun_fact, 40) + '\n' * 4
 
-    print("Your random fact:", fun_fact)
-
-    # pdf_file_path =  '/tmp/fact_to_print.pdf'
     image_path = os.path.join(script_directory, "src", "images", category+".png")
     pdf_file_path = os.path.join(script_directory, "fact_to_print.pdf")
 
