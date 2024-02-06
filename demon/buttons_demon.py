@@ -114,10 +114,23 @@ def get_local_ip():
         print(f"Error getting local IP: {e}")
     return "NOT CONNECTED!"
 
+def format_duration(seconds):
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    days, hours = divmod(hours, 24)
+
+    if days > 0:
+        return str(f"{days}d {hours}h {minutes}m")
+    elif hours > 0:
+        return str(f"{hours:02d}h {minutes:02d}m")
+    else:
+        return str(f"{minutes:02d}m {seconds:02d}s")
+
 def get_uptime():
     with open('/proc/uptime', 'r') as f:
         uptime_seconds = float(f.readline().split()[0])
-    return str(math.ceil(uptime_seconds / 60)) + "min"
+    formatted_uptime = format_duration(math.ceil(uptime_seconds))
+    return formatted_uptime
 
 def draw_menu():
     with canvas2(device) as draw:
