@@ -49,7 +49,6 @@ logging.basicConfig(
     datefmt='%d-%m-%Y %H:%M:%S',
 )
 
-CURRENT_DATETIME = datetime.now()
 PRINTER_NAME = 'BIXOLON_SRP-E300'
 
 def fetch_and_parse_json(url=None):
@@ -101,7 +100,8 @@ def create_pdf(file_path, image_path, text):
         c.setFont('Helvetica', 7.5)
 
         # Add time and date at the bottom
-        human_readable_date = CURRENT_DATETIME.strftime("%H:%M:%S %d %B %Y")
+        current_datetime = datetime.now()
+        human_readable_date = current_datetime.strftime("%H:%M:%S %d %B %Y")
         c.drawString(7, height - 140, human_readable_date)
 
         # Save the PDF
